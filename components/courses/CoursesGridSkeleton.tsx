@@ -1,4 +1,5 @@
 import CourseCardSkeleton from "./CourseCardSkeleton";
+import { COURSES_LIMIT } from "@/constants/courses";
 
 interface CoursesGridSkeletonProps {
   count?: number;
@@ -10,8 +11,8 @@ interface CoursesGridSkeletonProps {
 }
 
 export default function CoursesGridSkeleton({
-  count = 8,
-}: CoursesGridSkeletonProps = {}) {
+  count = COURSES_LIMIT,
+}: CoursesGridSkeletonProps) {
   return (
     <section aria-label="Loading courses">
       <ul className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">

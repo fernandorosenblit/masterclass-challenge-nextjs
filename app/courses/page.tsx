@@ -3,6 +3,7 @@ import { API_ROUTES } from "@/constants/routes";
 import { api } from "@/lib/api";
 import { Course } from "@/types/course";
 import type { Metadata } from "next";
+import { COURSES_INITIAL_OFFSET, COURSES_LIMIT } from "@/constants/courses";
 
 export const metadata: Metadata = {
   title: "Masterclass Courses | Explore Expert-Led Learning",
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
 export default async function CoursesPage() {
   const initialCourses = await api.get<Course[]>(API_ROUTES.courses, {
     pagination: {
-      limit: 12,
-      offset: 0,
+      limit: COURSES_LIMIT,
+      offset: COURSES_INITIAL_OFFSET,
     },
   });
 

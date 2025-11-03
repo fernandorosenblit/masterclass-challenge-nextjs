@@ -38,26 +38,37 @@ export function useToggleFavorite() {
         queryKey: [QUERY_KEYS.COURSES],
       });
 
-      const previousCourses = queryClient.getQueryData<Course[]>([
-        QUERY_KEYS.COURSES,
-      ]);
+      const queryData = queryClient.getQueryData<
+        Course[] | { pages: Course[][]; pageParams: number[] }
+      >([QUERY_KEYS.COURSES]);
 
-      if (previousCourses) {
-        queryClient.setQueryData<Course[]>(
-          [QUERY_KEYS.COURSES],
-          previousCourses.map((c) =>
-            c.id === course.id ? { ...c, favorite: newFavoriteStatus } : c
-          )
-        );
+      const updateCourse = (c: Course) =>
+        c.id === course.id ? { ...c, favorite: newFavoriteStatus } : c;
+
+      if (queryData) {
+        if ("pages" in queryData) {
+          queryClient.setQueryData<{
+            pages: Course[][];
+            pageParams: number[];
+          }>([QUERY_KEYS.COURSES], {
+            ...queryData,
+            pages: queryData.pages.map((page) => page.map(updateCourse)),
+          });
+        } else {
+          queryClient.setQueryData<Course[]>(
+            [QUERY_KEYS.COURSES],
+            (queryData as Course[]).map(updateCourse)
+          );
+        }
       }
 
-      return { previousCourses };
+      return { previousQueryData: queryData };
     },
     onError: (_err, _variables, context) => {
-      if (context?.previousCourses) {
-        queryClient.setQueryData<Course[]>(
+      if (context?.previousQueryData) {
+        queryClient.setQueryData(
           [QUERY_KEYS.COURSES],
-          context.previousCourses
+          context.previousQueryData
         );
       }
     },
