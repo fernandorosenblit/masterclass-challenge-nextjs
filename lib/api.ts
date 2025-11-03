@@ -5,23 +5,38 @@ export interface ApiRequestOptions
   extends Omit<RequestInit, "headers" | "body"> {
   headers?: Record<string, string>;
   body?: unknown;
+  pagination?: {
+    limit?: number;
+    offset?: number;
+  };
 }
 
 async function apiFetch<T = unknown>(
   endpoint: string,
   options: ApiRequestOptions = {}
 ): Promise<T> {
-  const { headers = {}, body, ...restOptions } = options;
+  const { headers = {}, body, pagination, ...restOptions } = options;
 
   let url = `${BASE_URL}${
     endpoint.startsWith("/") ? endpoint : `/${endpoint}`
   }`;
 
+  const urlObj = new URL(url);
+
   if (EMAIL) {
-    const urlObj = new URL(url);
     urlObj.searchParams.set("email", EMAIL);
-    url = urlObj.toString();
   }
+
+  if (pagination) {
+    if (pagination.limit !== undefined) {
+      urlObj.searchParams.set("page[limit]", pagination.limit.toString());
+    }
+    if (pagination.offset !== undefined) {
+      urlObj.searchParams.set("page[offset]", pagination.offset.toString());
+    }
+  }
+
+  url = urlObj.toString();
 
   const requestHeaders: HeadersInit = {
     "Content-Type": "application/json",

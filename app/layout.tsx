@@ -14,8 +14,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Masterclass Challenge - Next.js",
-  description: "Masterclass Challenge - Next.js",
+  title: {
+    default: "Masterclass | Expert-Led Courses",
+    template: "%s | Masterclass",
+  },
+  description:
+    "Discover expert-led masterclass courses from industry leaders. Learn new skills and advance your career with world-class instructors.",
+  keywords: [
+    "masterclass",
+    "online courses",
+    "learning",
+    "education",
+    "skills",
+  ],
+  authors: [{ name: "Masterclass" }],
 };
 
 export default function RootLayout({
