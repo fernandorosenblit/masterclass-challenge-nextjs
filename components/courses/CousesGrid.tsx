@@ -15,7 +15,12 @@ export default function CoursesGrid({
   const { data, isLoading, error } = useQuery({
     queryKey: [QUERY_KEYS.COURSES],
     queryFn: () =>
-      api.get<Course[]>(`${API_ROUTES.courses}?page[limit]=12&page[offset]=0`),
+      api.get<Course[]>(API_ROUTES.courses, {
+        pagination: {
+          limit: 12,
+          offset: 0,
+        },
+      }),
     initialData: initialCourses,
   });
 

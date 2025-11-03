@@ -4,9 +4,12 @@ import { api } from "@/lib/api";
 import { Course } from "@/types/course";
 
 export default async function CoursesPage() {
-  const initialCourses = await api.get<Course[]>(
-    `${API_ROUTES.courses}?page[limit]=12&page[offset]=0`
-  );
+  const initialCourses = await api.get<Course[]>(API_ROUTES.courses, {
+    pagination: {
+      limit: 12,
+      offset: 0,
+    },
+  });
 
   return (
     <div>
