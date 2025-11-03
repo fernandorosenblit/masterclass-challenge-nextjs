@@ -65,6 +65,7 @@ export default function CoursesGrid({
     hasNextPage: hasNextPage ?? false,
     isFetchingNextPage,
     fetchNextPage,
+    disabled: showFavoritesOnly,
   });
 
   const toggleFilter = () => {

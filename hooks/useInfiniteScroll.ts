@@ -7,6 +7,7 @@ interface UseInfiniteScrollOptions {
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
   threshold?: number;
+  disabled?: boolean;
 }
 
 /**
@@ -17,10 +18,15 @@ export function useInfiniteScroll({
   isFetchingNextPage,
   fetchNextPage,
   threshold = 300,
+  disabled = false,
 }: UseInfiniteScrollOptions) {
   const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (disabled) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -40,7 +46,7 @@ export function useInfiniteScroll({
         observer.unobserve(currentTarget);
       }
     };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, threshold]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, threshold, disabled]);
 
   return observerTarget;
 }
