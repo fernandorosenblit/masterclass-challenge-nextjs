@@ -64,6 +64,10 @@ async function apiFetch<T = unknown>(
       );
     }
 
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     const data = await response.json();
     return data as T;
   } catch (error) {
@@ -98,9 +102,13 @@ export const api = {
 
   delete: <T = unknown>(
     endpoint: string,
+    body?: unknown,
     options?: Omit<ApiRequestOptions, "method" | "body">
   ) => {
-    const bodyWithEmail = { email: EMAIL };
+    const bodyWithEmail =
+      typeof body === "object" && body !== null
+        ? { ...(body as Record<string, unknown>), email: EMAIL }
+        : { email: EMAIL };
     return apiFetch<T>(endpoint, {
       ...options,
       method: "DELETE",
