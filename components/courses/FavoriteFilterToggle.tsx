@@ -6,14 +6,17 @@ import clsx from "clsx";
 interface FavoriteFilterToggleProps {
   isActive: boolean;
   onToggle: () => void;
-  count: number;
+  favoritesCount: number;
+  totalCount: number;
 }
 
 export default function FavoriteFilterToggle({
   isActive,
   onToggle,
-  count,
+  favoritesCount,
+  totalCount,
 }: FavoriteFilterToggleProps) {
+  const displayCount = isActive ? totalCount : favoritesCount;
   return (
     <button
       onClick={onToggle}
@@ -37,14 +40,14 @@ export default function FavoriteFilterToggle({
         strokeWidth="2"
       />
       <span className="font-medium">{isActive ? "Show All" : "Favorites"}</span>
-      {count > 0 && (
+      {displayCount > 0 && (
         <span
           className={clsx("px-2 py-0.5 rounded-full text-xs font-semibold", {
             "bg-red-500 text-white": isActive,
             "bg-gray-200 text-gray-700": !isActive,
           })}
         >
-          {count}
+          {displayCount}
         </span>
       )}
     </button>

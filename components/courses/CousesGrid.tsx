@@ -61,35 +61,34 @@ export default function CoursesGrid({
     return <CoursesGridSkeleton count={8} />;
   }
 
-  if (!filteredCourses || filteredCourses.length === 0) {
-    return (
-      <div className="rounded-lg bg-gray-50 border border-gray-200 p-12 text-center">
-        <p className="text-lg text-gray-900">
-          {showFavoritesOnly ? "No favorite courses found" : "No courses found"}
-        </p>
-      </div>
-    );
-  }
-
   return (
     <>
-      {favoritesCount > 0 && (
-        <div className="mb-6 flex justify-end">
-          <FavoriteFilterToggle
-            isActive={showFavoritesOnly}
-            onToggle={toggleFilter}
-            count={favoritesCount}
-          />
-        </div>
-      )}
+      <div className="mb-6 flex justify-end">
+        <FavoriteFilterToggle
+          isActive={showFavoritesOnly}
+          onToggle={toggleFilter}
+          favoritesCount={favoritesCount}
+          totalCount={data?.length ?? 0}
+        />
+      </div>
       <section aria-label="Courses listing">
-        <ul className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
-          {filteredCourses.map((course: Course) => (
-            <li key={course.id}>
-              <CourseCard course={course} />
-            </li>
-          ))}
-        </ul>
+        {!filteredCourses || filteredCourses.length === 0 ? (
+          <div className="rounded-lg bg-gray-50 border border-gray-200 p-12 text-center">
+            <p className="text-lg text-gray-900">
+              {showFavoritesOnly
+                ? "No favorite courses found"
+                : "No courses found"}
+            </p>
+          </div>
+        ) : (
+          <ul className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
+            {filteredCourses.map((course: Course) => (
+              <li key={course.id}>
+                <CourseCard course={course} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </>
   );
