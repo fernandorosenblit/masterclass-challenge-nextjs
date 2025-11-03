@@ -1,7 +1,7 @@
 export default function CourseCardSkeleton() {
   return (
     <div
-      className="border border-gray-200 rounded-lg p-4 animate-pulse bg-white"
+      className="border border-gray-200 rounded-lg p-4 animate-pulse bg-white w-full"
       aria-label="Loading course"
     >
       <div className="relative overflow-hidden rounded-md aspect-video bg-gray-200 mb-3" />
@@ -12,4 +12,3 @@ export default function CourseCardSkeleton() {
     </div>
   );
 }
-

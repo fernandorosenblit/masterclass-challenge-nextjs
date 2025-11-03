@@ -6,10 +6,12 @@ import CoursesGridSkeleton from "./CoursesGridSkeleton";
 import FavoriteFilterToggle from "./FavoriteFilterToggle";
 import { api } from "@/lib/api";
 import { QUERY_KEYS } from "@/constants/query";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { API_ROUTES } from "@/constants/routes";
 import { useFilterFavorites } from "@/hooks/useFilterFavorites";
-import { useState } from "react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { useState, useMemo } from "react";
+import { COURSES_INITIAL_OFFSET, COURSES_LIMIT } from "@/constants/courses";
 
 export default function CoursesGrid({
   initialCourses,
@@ -18,22 +20,52 @@ export default function CoursesGrid({
 }) {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: [QUERY_KEYS.COURSES],
-    queryFn: () =>
-      api.get<Course[]>(API_ROUTES.courses, {
+    queryFn: async ({ pageParam = COURSES_INITIAL_OFFSET }) => {
+      return api.get<Course[]>(API_ROUTES.courses, {
         pagination: {
-          limit: 12,
-          offset: 0,
+          limit: COURSES_LIMIT,
+          offset: pageParam,
         },
-      }),
-    initialData: initialCourses,
+      });
+    },
+    initialPageParam: COURSES_INITIAL_OFFSET,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || lastPage.length < COURSES_LIMIT) {
+        return undefined;
+      }
+      return allPages.length * COURSES_LIMIT;
+    },
+    initialData: initialCourses
+      ? {
+          pages: [initialCourses],
+          pageParams: [COURSES_INITIAL_OFFSET],
+        }
+      : undefined,
   });
 
+  const allCourses = useMemo(() => {
+    return data?.pages.flat() ?? [];
+  }, [data?.pages]);
+
   const { filteredCourses, favoritesCount } = useFilterFavorites(
-    data,
+    allCourses,
     showFavoritesOnly
   );
+
+  const observerTarget = useInfiniteScroll({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
   const toggleFilter = () => {
     setShowFavoritesOnly((prev) => !prev);
@@ -57,10 +89,6 @@ export default function CoursesGrid({
     );
   }
 
-  if (isLoading) {
-    return <CoursesGridSkeleton count={8} />;
-  }
-
   return (
     <>
       <div className="mb-6 flex justify-end">
@@ -68,7 +96,7 @@ export default function CoursesGrid({
           isActive={showFavoritesOnly}
           onToggle={toggleFilter}
           favoritesCount={favoritesCount}
-          totalCount={data?.length ?? 0}
+          totalCount={allCourses.length}
         />
       </div>
       <section aria-label="Courses listing">
@@ -81,13 +109,17 @@ export default function CoursesGrid({
             </p>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
-            {filteredCourses.map((course: Course) => (
-              <li key={course.id}>
-                <CourseCard course={course} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
+              {filteredCourses.map((course: Course) => (
+                <li key={course.id}>
+                  <CourseCard course={course} />
+                </li>
+              ))}
+            </ul>
+            <div ref={observerTarget} className="h-4" />
+            {isFetchingNextPage && <CoursesGridSkeleton />}
+          </>
         )}
       </section>
     </>
