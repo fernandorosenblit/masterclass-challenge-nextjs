@@ -1,3 +1,6 @@
+
+[Recording](https://github.com/user-attachments/assets/8db074d4-f8d9-4ab1-b684-f97f2f5972b6)
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
