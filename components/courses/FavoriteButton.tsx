@@ -2,6 +2,7 @@
 
 import { Course } from "@/types/course";
 import { Heart } from "lucide-react";
+import clsx from "clsx";
 
 interface FavoriteButtonProps {
   course: Course;
@@ -26,11 +27,15 @@ export default function FavoriteButton({
         course.favorite ? "Remove from favorites" : "Add to favorites"
       }
       disabled={isPending}
-      className={`absolute top-2 right-2 p-2 rounded-full transition-all z-10 ${
-        course.favorite
-          ? "bg-red-500 text-white hover:bg-red-600"
-          : "bg-white/90 text-gray-600 hover:bg-white hover:text-red-500"
-      } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+      className={clsx(
+        "absolute top-2 right-2 p-2 rounded-full transition-all z-10",
+        {
+          "bg-red-500 text-white hover:bg-red-600": course.favorite,
+          "bg-white/90 text-gray-600 hover:bg-white hover:text-red-500":
+            !course.favorite,
+          "opacity-50 cursor-not-allowed": isPending,
+        }
+      )}
       type="button"
     >
       <Heart

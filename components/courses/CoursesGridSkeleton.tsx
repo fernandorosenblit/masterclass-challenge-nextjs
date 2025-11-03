@@ -14,9 +14,7 @@ export default function CoursesGridSkeleton({
 }: CoursesGridSkeletonProps = {}) {
   return (
     <section aria-label="Loading courses">
-      <ul
-        className={`grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none`}
-      >
+      <ul className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
         {Array.from({ length: count }).map((_, index) => (
           <li key={index}>
             <CourseCardSkeleton />

@@ -4,6 +4,7 @@ import { Course } from "@/types/course";
 import Image from "next/image";
 import FavoriteButton from "./FavoriteButton";
 import { useToggleFavorite } from "@/hooks/useToggleFavorite";
+import clsx from "clsx";
 
 export default function CourseCard({ course }: { course: Course }) {
   const { toggleFavorite, isPending } = useToggleFavorite();
@@ -15,9 +16,13 @@ export default function CourseCard({ course }: { course: Course }) {
   return (
     <article
       onClick={handleCardClick}
-      className={`group border border-gray-200 rounded-lg p-4 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200 bg-white h-full cursor-pointer relative ${
-        isPending ? "opacity-75" : ""
-      } ${course.favorite ? "ring-2 ring-red-500" : ""}`}
+      className={clsx(
+        "group border border-gray-200 rounded-lg p-4 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200 bg-white h-full cursor-pointer relative",
+        {
+          "opacity-75": isPending,
+          "ring-2 ring-red-500": course.favorite,
+        }
+      )}
     >
       <div className="relative overflow-hidden rounded-md aspect-video bg-gray-100">
         <Image
