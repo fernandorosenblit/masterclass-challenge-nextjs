@@ -44,9 +44,6 @@ export default function FavoriteButton({
         stroke="currentColor"
         strokeWidth="2"
       />
-      <span className="sr-only">
-        {course.favorite ? "Remove from favorites" : "Add to favorites"}
-      </span>
     </button>
   );
 }
